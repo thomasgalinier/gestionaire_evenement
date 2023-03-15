@@ -1,7 +1,7 @@
 <?php 
     session_start();
-    if(!(isset ($_SESSION['id_utilisateur']) && $_SESSION['Role'] ='admin')){
-        header(('location:connexion.php'));
+    if(!(isset ($_SESSION['IdUtilisateur']) && $_SESSION['Role'] =='admin')){
+        header('location:connexion.php');
     }
 ?>
 <!DOCTYPE html>
@@ -13,6 +13,6 @@
     <title>admin</title>
 </head>
 <body>
-    
+    <p>bonjour je suis administrateur</p>
 </body>
 </html>

@@ -1,4 +1,6 @@
-<?php include('./config/config.php') ?>
+<?php include('./config/config.php');
+    session_start()
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,11 +9,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.4/flowbite.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.4/flowbite.min.js"></script>
 </head>
-<body>
+<body class="bg-gray-50" >
     <?php  include HEADERUSER ?>
     
-    <main class="bg-gray-50 py-20">
+    <main class="py-20">
         
         <?php
             $servername = "mysql:host=localhost;dbname=Evenements;charset=utf8;port=8888";
@@ -20,10 +24,12 @@
             $conn = new PDO($servername,$username,$password,[]);
             $sql = $conn ->prepare(("SELECT * FROM Evenement JOIN Utilisateurs ON Evenement.IdUtilisateur = Utilisateurs.IdUtilisateur"));
             $sql -> execute();
-            $events = $sql -> fetchAll(PDO::FETCH_ASSOC); ?>
+            $events = $sql -> fetchAll(PDO::FETCH_ASSOC);
+            ?>
         <section class="events flex flex-col w-full items-center gap-20 w-full ">
+
         <?php foreach($events as $event) : ?>
-        <div class="flex justify-center gap-20 bg-white shadow p-10 rounded">
+        <div class="flex justify-center gap-20 bg-gray-800 shadow p-10 rounded text-white">
                 <a href="#"><img  src="<?=IMAGE.$event['ImageSrc'] ?>" alt="" class="rounded"></a>
                 <div class="flex flex-col justify-around">
                     <div class="gap-8 flex">
@@ -37,12 +43,11 @@
                         </div>
                     <p>Organisateur : <?=$event['Nom']. ' '. $event['Prenom']?></p>
                     <p>Nombres de places: <?=$event["NbPlace"]?></p>
-                    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">s'inscrire à l'evenements</button>
+                    <button class="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded">s'inscrire à l'evenements</button>
                 </div>
         </div>
         <?php endforeach ?> 
         </section>
-        
     </main>
 </body>
 </html>

@@ -23,7 +23,7 @@
             $events = $sql -> fetchAll(PDO::FETCH_ASSOC); ?>
         <section class="events flex flex-col w-full items-center gap-20 w-full ">
         <?php foreach($events as $event) : ?>
-        <div class="flex justify-center gap-20 bg-white shadow p-10 rounded">
+        <div class="flex justify-center gap-20 bg-gray-800 shadow p-10 rounded text-white">
                 <a href="#"><img  src="<?=IMAGE.$event['ImageSrc'] ?>" alt="" class="rounded"></a>
                 <div class="flex flex-col justify-around">
                     <div class="gap-8 flex">

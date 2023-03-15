@@ -1,5 +1,5 @@
 <?php 
-   
+   session_start();
     $servername = "mysql:host=localhost;dbname=Evenements;charset=utf8;port=8888";
     $username = "root";
     $password = "root";
