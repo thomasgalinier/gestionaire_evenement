@@ -17,20 +17,34 @@
     
     <main class="py-20">
         
-        <?php
-            $servername = "mysql:host=localhost;dbname=Evenements;charset=utf8;port=8888";
-            $username = "root";
-            $password = "root";
-            $conn = new PDO($servername,$username,$password,[]);
-            $sql = $conn ->prepare(("SELECT * FROM Evenement JOIN Utilisateurs ON Evenement.IdUtilisateur = Utilisateurs.IdUtilisateur"));
-            $sql -> execute();
-            $events = $sql -> fetchAll(PDO::FETCH_ASSOC);
-            ?>
+    <?php
+$servername = "mysql:host=localhost;dbname=Evenements;charset=utf8;port=8888";
+$username = "root";
+$password = "root";
+$conn = new PDO($servername,$username,$password,[]);
+$sql = $conn->prepare("
+    SELECT *, 
+        (SELECT COUNT(IdUtilisateur) 
+         FROM participer 
+         WHERE IdEvenement = Evenement.IdEvenement) AS Nombre_Utilisateurs,
+        (SELECT IF(COUNT(*) > 0, 1, 0) 
+         FROM participer 
+         WHERE IdEvenement = Evenement.IdEvenement AND IdUtilisateur = :id_utilisateur) AS Est_Inscrit 
+    FROM Evenement 
+    JOIN Utilisateurs ON Evenement.IdUtilisateur = Utilisateurs.IdUtilisateur
+    JOIN Lieu ON Evenement.IdLieu = Lieu.IdLieu
+");            
+
+$sql->bindParam(':id_utilisateur', $_SESSION['IdUtilisateur'], PDO::PARAM_INT);
+$sql->execute();
+$events = $sql->fetchAll(PDO::FETCH_ASSOC);
+
+?>
         <section class="events flex flex-col w-full items-center gap-20 w-full ">
 
         <?php foreach($events as $event) : ?>
-        <div class="flex justify-center gap-20 bg-gray-800 shadow p-10 rounded text-white">
-                <a href="#"><img  src="<?=IMAGE.$event['ImageSrc'] ?>" alt="" class="rounded"></a>
+            <div class="flex justify-center gap-20 bg-gray-800 shadow p-10 rounded text-white">
+                <a href="evenement.php?id=<?=$event['IdEvenement']?>"><img src="<?=IMAGE.$event['ImageSrc'] ?>" alt="" class="rounded w-80 h-48"></a>
                 <div class="flex flex-col justify-around">
                     <div class="gap-8 flex">
                         <h2><?= $event['Titre'] ?></h2>
@@ -40,12 +54,22 @@
                             </svg>
                             <p><?=$event['Date']?></p>
                         </div>
-                        </div>
-                    <p>Organisateur : <?=$event['Nom']. ' '. $event['Prenom']?></p>
-                    <p>Nombres de places: <?=$event["NbPlace"]?></p>
-                    <button class="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded">s'inscrire à l'evenements</button>
-                </div>
-        </div>
+                    </div>
+                        <p>Organisateur : <?=$event['Nom']. ' '. $event['Prenom']?></p>
+                        <p>Nombres de places: <?=$event["NbPlace"] - $event['Nombre_Utilisateurs']?></p>
+                        <?php if($event['Est_Inscrit']== "0"){?>
+                            <form method="POST" action="eventSubscribe.php?id_evenement=<?= $event['IdEvenement'] ?>">
+                                <input type="hidden" name="id_evenement" value="<?=$event['IdEvenement']?>">
+                                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded">s'inscrire à l'evenement</button>
+                            </form>        
+                        <?php }else{ ?>
+                            <form method="POST" action="eventSubscribe.php?id_evenement=<?= $event['IdEvenement'] ?>">
+                                <input type="hidden" name="id_evenement" value="<?=$event['IdEvenement']?>">
+                                <button type="submit" class="bg-gray-600 hover:bg-red-300 text-red-500 py-2 px-4 rounded">se désinscrire de l'évenement</button>
+                            </form>
+                        <?php } ?>
+                    </div>
+            </div>
         <?php endforeach ?> 
         </section>
     </main>
@@ -57,10 +81,3 @@
 
 
 
-<?php 
-
-// $sql = $conn ->prepare("SELECT * FROM Utilisateurs");
-// $sql -> execute();
-// $utilisateurs = $sql->fetchAll(PDO::FETCH_ASSOC);
-// foreach ($utilisateurs as $utilisateur);
-?>

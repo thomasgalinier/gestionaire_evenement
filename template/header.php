@@ -2,7 +2,7 @@
     <nav class="flex justify-between w-full px-10" >
         <div><h2 class="text-2xl">logo</h2></div>
         <ul class="flex gap-8 ">
-            <li><a href="evenements.php" >Evénements</a></li>
+            <li><a href="index.php" >Evénements</a></li>
             <li><a href="contacter.php">Nous contacter</a></li>
             <li><a href="aPropos">À propos</a></li>
         </ul>
